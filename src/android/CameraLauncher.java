@@ -79,7 +79,7 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
     private static final String GET_PICTURE = "Get Picture";
     private static final String GET_VIDEO = "Get Video";
     private static final String GET_All = "Get All";
-    
+
     private static final String LOG_TAG = "CameraLauncher";
 
     //Where did this come from?
@@ -159,11 +159,11 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
                 callbackContext.sendPluginResult(r);
                 return true;
             }
-             
+
             PluginResult r = new PluginResult(PluginResult.Status.NO_RESULT);
             r.setKeepCallback(true);
             callbackContext.sendPluginResult(r);
-            
+
             return true;
         }
         return false;
@@ -260,7 +260,7 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
      * @param quality           Compression quality hint (0-100: 0=low quality & high compression, 100=compress of max quality)
      * @param srcType           The album to get image from.
      * @param returnType        Set the type of image to return.
-     * @param encodingType 
+     * @param encodingType
      */
     // TODO: Images selected from SDCARD don't display correctly, but from CAMERA ALBUM do!
     // TODO: Images from kitkat filechooser not going into crop function
@@ -311,7 +311,7 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
 
   /**
    * Brings up the UI to perform crop on passed image URI
-   * 
+   *
    * @param picUri
    */
   private void performCrop(Uri picUri, int destType, Intent cameraIntent) {
@@ -403,7 +403,7 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
                 // Try to get the bitmap from intent.
                 bitmap = (Bitmap)intent.getExtras().get("data");
             }
-            
+
             // Double-check the bitmap.
             if (bitmap == null) {
                 Log.d(LOG_TAG, "I either have a null image path or bitmap");
@@ -436,7 +436,7 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
             }
 
             // If all this is true we shouldn't compress the image.
-            if (this.targetHeight == -1 && this.targetWidth == -1 && this.mQuality == 100 && 
+            if (this.targetHeight == -1 && this.targetWidth == -1 && this.mQuality == 100 &&
                     !this.correctOrientation) {
                 writeUncompressedImage(uri);
 
@@ -552,7 +552,8 @@ private String ouputModifiedBitmap(Bitmap bitmap, Uri uri) throws IOException {
             // rotating, nor compressing needs to be done
             if (this.targetHeight == -1 && this.targetWidth == -1 &&
                     (destType == FILE_URI || destType == NATIVE_URI) && !this.correctOrientation) {
-                this.callbackContext.success(uri.toString());
+                String realPath = FileHelper.getRealPath(uri, this.cordova);
+                this.callbackContext.success(realPath);
             } else {
                 String uriString = uri.toString();
                 // Get the path to the image. Makes loading so much easier.
@@ -621,7 +622,7 @@ private String ouputModifiedBitmap(Bitmap bitmap, Uri uri) throws IOException {
             }
         }
     }
-    
+
     /**
      * Called when the camera view exits.
      *
@@ -802,7 +803,7 @@ private String ouputModifiedBitmap(Bitmap bitmap, Uri uri) throws IOException {
      *
      * @param imagePath
      * @return
-     * @throws IOException 
+     * @throws IOException
      */
     private Bitmap getScaledBitmap(String imageUrl) throws IOException {
         // If no new width or height were specified return the original bitmap
@@ -814,13 +815,13 @@ private String ouputModifiedBitmap(Bitmap bitmap, Uri uri) throws IOException {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeStream(FileHelper.getInputStreamFromUriString(imageUrl, cordova), null, options);
-        
+
         //CB-2292: WTF? Why is the width null?
         if(options.outWidth == 0 || options.outHeight == 0)
         {
             return null;
         }
-        
+
         // determine the correct aspect ratio
         int[] widthHeight = calculateAspectRatio(options.outWidth, options.outHeight);
 
